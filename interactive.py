@@ -115,16 +115,16 @@ if args.p_srb is None:
     p_srb = np.zeros((h, w), dtype=np.uint8)
 else:
     p_srb = cv2.imread(args.p_srb, cv2.IMREAD_GRAYSCALE)
-    p_srb[p_srb>=0.5] = 1
-    p_srb[p_srb<0.5] = 0
+    p_srb[p_srb >= 250] = 0
+    p_srb[p_srb > 0] = 1
 
 
 if args.n_srb is None:
     n_srb = np.zeros((h, w), dtype=np.uint8)
 else:
     n_srb = cv2.imread(args.n_srb, cv2.IMREAD_GRAYSCALE)
-    n_srb[n_srb>=0.5] = 1
-    n_srb[n_srb<0.5] = 0
+    n_srb[n_srb >= 250] = 0
+    n_srb[n_srb > 0] = 1
 
 manager = InteractiveManager(net, image, mask, p_srb, n_srb)
 
