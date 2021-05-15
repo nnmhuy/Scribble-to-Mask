@@ -1,6 +1,7 @@
 import os
 from os import path
 from argparse import ArgumentParser
+from PIL import Image
 
 import numpy as np
 import torch
@@ -82,6 +83,20 @@ parser.add_argument('--output', default='output_mask.jpg')
 args = parser.parse_args()
 
 
+def process_mask(mask):
+  bw = np.squeeze(mask, axis=(2,)).astype(np.float64)
+  bw *= 1.0/bw.max()
+
+  bw = np.where(bw >= 0.7, 1, 0)
+  bw = bw.astype(np.uint8)
+
+  # Now we put it back in Pillow/PIL land
+  imfile = Image.fromarray(bw, 'P')
+  imfile.putpalette(paletteData)
+
+  imfile.save('mask_only.png')
+
+
 def comp_image(image, mask, p_srb, n_srb):
     color_mask = np.zeros_like(image, dtype=np.uint8)
     color_mask[:,:,2] = 1
@@ -90,6 +105,8 @@ def comp_image(image, mask, p_srb, n_srb):
     comp = (image*0.5 + color_mask*mask*0.5).astype(np.uint8)
     comp[p_srb>0.5, :] = np.array([0, 255, 0], dtype=np.uint8)
     comp[n_srb>0.5, :] = np.array([255, 0, 0], dtype=np.uint8)
+
+    process_mask(mask)
 
     return comp
 
