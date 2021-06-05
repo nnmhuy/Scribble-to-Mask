@@ -20,7 +20,7 @@ class CustomModelPrediction(object):
 
     model = S2M()
     model_path = os.path.join(model_dir, 's2m.pth')
-    model.load_state_dict(torch.load(model_path))
-    model = model.cuda().eval()
+    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+    model = model.eval()
     torch.set_grad_enabled(False)
     return cls(model)
